@@ -70,28 +70,28 @@ pipeline {
                     echo "deploying ..........."
                     def shellCommand = "bash ./commands.sh ${IMAGE_NAME}"
                     sshagent(['ec2-sample-app-001-key']) {
-                        sh "scp docker-compose.yaml ubuntu@${IP}:/home/ubuntu/app"
-                        sh "scp commands.sh ubuntu@${IP}:/home/ubuntu/app"
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} cd app && ${shellCommand}"
+                        sh "scp docker-compose.yaml ubuntu@${IP}:/home/ubuntu/"
+                        sh "scp commands.sh ubuntu@${IP}:/home/ubuntu/"
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} ${shellCommand}"
                     }
                 }
             }
         }
 
-        stage("commit version update") {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'github-y-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                        sh 'git config --global user.email "jenkins@example.com"'
-                        sh 'git config --global user.name "jenkins"'
+        // stage("commit version update") {
+        //     steps {
+        //         script {
+        //             withCredentials([usernamePassword(credentialsId: 'github-y-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+        //                 sh 'git config --global user.email "jenkins@example.com"'
+        //                 sh 'git config --global user.name "jenkins"'
 
-                        sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/yigitcicek/sample-app-spring-boot-hello/"
-                        sh "git add ."
-                        sh 'git commit -m "ci: version bump"'
-                        sh "git push origin HEAD:docekr-compose-ci-cd"
-                    }
-                }
-            }
-        }
+        //                 sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/yigitcicek/sample-app-spring-boot-hello/"
+        //                 sh "git add ."
+        //                 sh 'git commit -m "ci: version bump"'
+        //                 sh "git push origin HEAD:docekr-compose-ci-cd"
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
