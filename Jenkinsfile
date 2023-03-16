@@ -78,20 +78,21 @@ pipeline {
             }
         }
 
-        // stage("commit version update") {
-        //     steps {
-        //         script {
-        //             withCredentials([usernamePassword(credentialsId: 'github-y-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-        //                 sh 'git config --global user.email "jenkins@example.com"'
-        //                 sh 'git config --global user.name "jenkins"'
-
-        //                 sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/yigitcicek/sample-app-spring-boot-hello/"
-        //                 sh "git add ."
-        //                 sh 'git commit -m "ci: version bump"'
-        //                 sh "git push origin HEAD:docekr-compose-ci-cd"
-        //             }
-        //         }
-        //     }
-        // }
+        stage("commit version update") {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-y-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
+                        sh "pwd"
+                        sh "ls -la"
+                        sh 'git config --global user.email jenkins@example.com'
+                        sh 'git config --global user.name jenkins'
+                        sh "git add ."
+                        sh "git commit -m 'jenkins version bump'"
+                        sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/yigitcicek/sample-app-spring-boot-hello/tree/feature/payment"
+                    }
+                }
+            }
+        }
     }
 }
