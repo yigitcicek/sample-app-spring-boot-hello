@@ -87,9 +87,11 @@ pipeline {
                         sh "ls -la"
                         sh 'git config --global user.email jenkins@example.com'
                         sh 'git config --global user.name jenkins'
+                        sh "git remote set-url origin https://${USERNAME}:${encodedPassword}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
                         sh "git add ."
+                        // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
                         sh "git commit -m 'jenkins version bump'"
-                        sh "git push https://${USERNAME}:${encodedPassword}@github.com/yigitcicek/sample-app-spring-boot-hello/ HEAD:feature/docker-compose-ci-cd"
+                        sh "git push origin HEAD:feature/docker-compose-ci-cd"
                     }
                 }
             }
