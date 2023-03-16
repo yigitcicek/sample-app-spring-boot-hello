@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15.2-alpine3.17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: yadmin
+      POSTGRES_PASSWORD: 123qweASD
+    ports:
+      - 5432:5432
+
+  sample-app-spring-boot-hello:
+    image: ${IMAGE}
+    restart: unless-stopped
+    ports:
+      - 8080:8080

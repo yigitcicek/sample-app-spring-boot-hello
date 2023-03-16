@@ -12,10 +12,21 @@ pipeline {
     tools {
         maven "maven-3.9"
     }
-    environment {
-        IMAGE_NAME = "yigitcicek/spring-demo:sample-1.0"
-    }
     stages {
+        stage("increment version") {
+            steps {
+                script {
+                    echo "incrementing app version..."
+                    sh "mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit"
+                    def matcher = readFile('pom.xml') =~ "<version>(.+)</version>"
+                    def version = matcher[0][1]
+                    env.IMAGE_NAME = "$version-$BUILD_NUMBER"
+                }
+            }
+        }
+
         stage("build app") {
             steps {
                 script {
@@ -24,6 +35,7 @@ pipeline {
                 }
             }
         }
+
         stage("build image") {
             steps {
                 script {
@@ -32,6 +44,7 @@ pipeline {
                 }
             }
         }
+
         stage("push image") {
             steps {
                 script {
@@ -41,6 +54,7 @@ pipeline {
                 }
             }
         }
+
         stage("deploy") {
             input {
                 // get ec2 instance private IP
@@ -53,10 +67,27 @@ pipeline {
             steps {
                 script {
                     echo "deploying ..........."
-                    def dockerCommand = "docker run -d -p 80:80 ${IMAGE_NAME}"
-                    echo "ip is ${IP}"
+                    def shellCommand = "bash ./commands.sh ${IMAGE_NAME}"
                     sshagent(['ec2-sample-app-001-key']) {
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} ${dockerCommand}"
+                        sh "scp docker-compose.yaml ubuntu@${IP}:/home/ubuntu/app"
+                        sh "scp commands.sh ubuntu@${IP}:/home/ubuntu/app"
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} cd app && ${shellCommand}"
+                    }
+                }
+            }
+        }
+
+        stage("commit version update") {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-y-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
+
+                        sh "git remote set-url origin https://${USERNAME}:${PASSWORD}@github.com/yigitcicek/sample-app-spring-boot-hello/"
+                        sh "git add ."
+                        sh 'git commit -m "ci: version bump"'
+                        sh "git push origin HEAD:docekr-compose-ci-cd"
                     }
                 }
             }
