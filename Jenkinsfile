@@ -50,9 +50,10 @@ pipeline {
                 script {
                     echo "deploying ..........."
                     def dockerCommand = "docker run -d -p 80:80 nginx"
-                    sshagent(['ec2-sample-app-001-key']) {
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${params.IP} ${dockerCommand}"
-                    }
+                    echo "ip is ${IP}"
+                    // sshagent(['ec2-sample-app-001-key']) {
+                    //     sh "ssh -o StrictHostKeyChecking=no ubuntu@${params.IP} ${dockerCommand}"
+                    // }
                 }
             }
         }
