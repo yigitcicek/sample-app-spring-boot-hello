@@ -40,10 +40,10 @@ pipeline {
         }
         stage("deploy") {
             input {
-                message "Enter IP of Ec2 instance to deploy"
+                message "Ec2 instance"
                 ok "Done"
                 parameters {
-                    string defaultValue: "", description: "target ec2 ip address", name: "IP", trim: true
+                    string defaultValue: "", description: "target ec2 IP address", name: "IP", trim: true
                 }
             }
             steps {
@@ -51,9 +51,9 @@ pipeline {
                     echo "deploying ..........."
                     def dockerCommand = "docker run -d -p 80:80 nginx"
                     echo "ip is ${IP}"
-                    // sshagent(['ec2-sample-app-001-key']) {
-                    //     sh "ssh -o StrictHostKeyChecking=no ubuntu@${params.IP} ${dockerCommand}"
-                    // }
+                    sshagent(['ec2-sample-app-001-key']) {
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} ${dockerCommand}"
+                    }
                 }
             }
         }
