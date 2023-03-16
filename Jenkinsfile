@@ -89,7 +89,7 @@ pipeline {
                         sh 'git config --global user.name jenkins'
                         sh "git add ."
                         sh "git commit -m 'jenkins version bump'"
-                        sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/yigitcicek/sample-app-spring-boot-hello/"
+                        sh "git push https://${USERNAME}:${encodedPassword}@github.com/yigitcicek/sample-app-spring-boot-hello/"
                     }
                 }
             }
