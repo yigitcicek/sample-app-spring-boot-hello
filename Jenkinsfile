@@ -22,7 +22,8 @@ pipeline {
                         versions:commit"
                     def matcher = readFile('pom.xml') =~ "<version>(.+)</version>"
                     def version = matcher[0][1]
-                    env.IMAGE_NAME = "$version-$BUILD_NUMBER"
+                    env.IMAGE_NAME = "yigitcicek/sample-app-spring-boot-hello:$version-$BUILD_NUMBER"
+                    echo "$IMAGE_NAME"
                 }
             }
         }
@@ -40,7 +41,7 @@ pipeline {
             steps {
                 script {
                     echo "building image ..........."
-                    buildImage("sample-app-spring-boot-hello:${env.IMAGE_NAME}")
+                    buildImage(env.IMAGE_NAME)
                 }
             }
         }
