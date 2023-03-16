@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     echo "building image ..........."
-                    buildImage(env.IMAGE_NAME)
+                    buildImage("sample-app-spring-boot-hello:${env.IMAGE_NAME}")
                 }
             }
         }
