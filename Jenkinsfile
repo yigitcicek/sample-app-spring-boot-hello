@@ -38,16 +38,23 @@ pipeline {
                 }
             }
         }
-        // stage("deploy") {
-        //     steps {
-        //         script {
-        //             echo "deploying ..........."
-        //             def dockerCommand = "docker run -d -p 80:80 nginx"
-        //             sshagent(['sample-app-v1-key']) {
-        //                 sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.42.36 ${dockerCommand}"
-        //             }
-        //         }
-        //     }
-        // }
+        stage("deploy") {
+            input {
+                message "Enter IP of Ec2 instance to deploy"
+                ok "Done"
+                parameters {
+                    string defaultValue: "", description: "target ec2 ip address", name: "IP", trim: true
+                }
+            }
+            steps {
+                script {
+                    echo "deploying ..........."
+                    def dockerCommand = "docker run -d -p 80:80 nginx"
+                    sshagent(['ec2-sample-app-001-key']) {
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${params.IP} ${dockerCommand}"
+                    }
+                }
+            }
+        }
     }
 }
