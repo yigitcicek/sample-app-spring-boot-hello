@@ -40,10 +40,10 @@ pipeline {
         }
         stage("deploy") {
             input {
-                message "Ec2 instance"
+                message "Ec2 instance private"
                 ok "Done"
                 parameters {
-                    string defaultValue: "", description: "target ec2 IP address", name: "IP", trim: true
+                    string defaultValue: "", description: "target ec2 private IP address", name: "IP", trim: true
                 }
             }
             steps {
