@@ -85,7 +85,11 @@ pipeline {
             steps {
                 script {
                     // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
+                    sh "pwd"
+                    sh "ls -la"
+                    sh "ls -la .."
                     sh "printenv"
+                    sh "cat pom.xml"
                     sh 'git config --global user.email jenkins@example.com'
                     sh 'git config --global user.name jenkins'
                     sh "git remote set-url origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
