@@ -84,7 +84,7 @@ pipeline {
                     // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
                     sh 'git config --global user.email jenkins@example.com'
                     sh 'git config --global user.name jenkins'
-                    sh "git remote set-url origin https://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@github.com/yigitcicek/sample-app-spring-boot-hello.git"
+                    sh "git remote set-url origin git@github.com:yigitcicek/sample-app-spring-boot-hello.git"
                     sh "git add ."
                     // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
                     sh "git commit -m 'jenkins version bump'"
