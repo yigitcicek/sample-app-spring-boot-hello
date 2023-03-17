@@ -12,9 +12,6 @@ pipeline {
     tools {
         maven "maven-3.9"
     }
-    environment {
-        TOKEN=credentials('github-y-token-for-push')
-    }
     stages {
         stage("increment version") {
             steps {
@@ -109,7 +106,7 @@ pipeline {
         stage('Push to GitHub') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'github-y-token-for-push', variable: 'GITHUB_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'common-jenkins-token-v1', variable: 'TOKEN')]) {
                         sh '''
                         pwd
                         printenv
@@ -117,10 +114,12 @@ pipeline {
                         ls -la ..
                         git config --global user.email "jenkins@example.com"
                         git config --global user.name "Jenkins"
-                        git remote set-url origin https://github.com/yigitcicek/sample-app-spring-boot-hello.git
+                        git remote remove origin
+                        git remote add origin https://yigitcicek:$TOKEN@github.com/yigitcicek/sample-app-spring-boot-hello.git
+                        git remote set-url origin https://yigitcicek:$TOKEN@github.com/yigitcicek/sample-app-spring-boot-hello.git
                         git add .
                         git commit -m "Jenkins build ${BUILD_NUMBER}"
-                        sh "git push --set-upstream origin feature/docker-compose-ci-cd -f -u $GITHUB_TOKEN"
+                        git push origin HEAD:feature/docker-compose-ci-cd
                         '''
                     }
                 }
