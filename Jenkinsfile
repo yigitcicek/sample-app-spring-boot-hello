@@ -111,13 +111,16 @@ pipeline {
                 script {
                     withCredentials([string(credentialsId: 'github-y-token-for-push', variable: 'GITHUB_TOKEN')]) {
                         sh '''
+                        pwd
+                        printenv
+                        ls -la
+                        ls -la ..
                         git config --global user.email "jenkins@example.com"
                         git config --global user.name "Jenkins"
                         git remote set-url origin https://github.com/yigitcicek/sample-app-spring-boot-hello.git
-                        git checkout feature/docker-compose-ci-cd
                         git add .
                         git commit -m "Jenkins build ${BUILD_NUMBER}"
-                        sh "git push --set-upstream origin main -f -u $GITHUB_TOKEN"
+                        sh "git push --set-upstream origin feature/docker-compose-ci-cd -f -u $GITHUB_TOKEN"
                         '''
                     }
                 }
