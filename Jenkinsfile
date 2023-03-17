@@ -84,10 +84,11 @@ pipeline {
                     // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
                     sh 'git config --global user.email jenkins@example.com'
                     sh 'git config --global user.name jenkins'
-                    sh "git remote set-url origin https://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@github.com/yigitcicek/sample-app-spring-boot-hello.git"
+                    sh "git remote add origin https://yigitcicek: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@github.com/yigitcicek/sample-app-spring-boot-hello.git"
+                    sh "git remote set-url origin https://yigitcicek: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@github.com/yigitcicek/sample-app-spring-boot-hello.git"
                     sh "git add ."
                     // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
-                    sh "git commit -m 'jenkins version bump'"
+                    sh "git commit -m 'jenkins version bump from build ${BUILD_NUMBER}'"
                     sh "git push origin HEAD:feature/docker-compose-ci-cd"
                 }
             }
