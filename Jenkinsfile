@@ -81,27 +81,45 @@ pipeline {
         //     }
         // }
 
-        stage("commit version update") {
-            steps {
-                script {
-                    // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
-                    sh "pwd"
-                    sh "ls -la"
-                    sh "ls -la .."
-                    sh "printenv"
-                    sh "cat pom.xml"
-                    sh 'git config --global user.email jenkins@example.com'
-                    sh 'git config --global user.name jenkins'
-                    sh "git remote remove origin"
-                    sh "git remote add origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
-                    sh "git remote set-url origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
-                    sh "git add ."
-                    // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
-                    sh "git commit -m 'jenkins version bump from build ${BUILD_NUMBER}'"
-                    sh "git push origin HEAD:feature/docker-compose-ci-cd"
+        // stage("commit version update") {
+        //     steps {
+        //         script {
+        //             // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
+        //             sh "pwd"
+        //             sh "ls -la"
+        //             sh "ls -la .."
+        //             sh "printenv"
+        //             sh "cat pom.xml"
+        //             sh 'git config --global user.email jenkins@example.com'
+        //             sh 'git config --global user.name jenkins'
+        //             sh "git remote remove origin"
+        //             sh "git remote add origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
+        //             sh "git remote set-url origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
+        //             sh "git add ."
+        //             // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
+        //             sh "git commit -m 'jenkins version bump from build ${BUILD_NUMBER}'"
+        //             sh "git push origin HEAD:feature/docker-compose-ci-cd"
                     
-                }
+        //         }
+        //     }
+        // }
+
+
+
+        stage('Push to GitHub') {
+        withCredentials([string(credentialsId: 'github-y-token-for-push', variable: 'GITHUB_TOKEN')]) {
+            steps {
+                sh '''
+                git config --global user.email "jenkins@example.com"
+                git config --global user.name "Jenkins"
+                git remote set-url origin https://github.com/yigitcicek/sample-app-spring-boot-hello.git
+                git checkout feature/docker-compose-ci-cd
+                git add .
+                git commit -m "Jenkins build ${BUILD_NUMBER}"
+                sh "git push --set-upstream origin main -f -u $GITHUB_TOKEN"
+                '''
             }
+        }
         }
     }
 }
