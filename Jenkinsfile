@@ -89,7 +89,7 @@ pipeline {
                         git remote add origin https://yigitcicek:$TOKEN@github.com/yigitcicek/sample-app-spring-boot-hello.git
                         git remote set-url origin https://yigitcicek:$TOKEN@github.com/yigitcicek/sample-app-spring-boot-hello.git
                         git add .
-                        git commit -m "Jenkins build ${BUILD_NUMBER}"
+                        git commit -m "version bump from jenkins build number: ${BUILD_NUMBER}"
                         git push origin HEAD:feature/docker-compose-ci-cd
                         '''
                     }
