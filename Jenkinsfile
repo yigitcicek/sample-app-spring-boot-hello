@@ -92,6 +92,8 @@ pipeline {
                     sh "cat pom.xml"
                     sh 'git config --global user.email jenkins@example.com'
                     sh 'git config --global user.name jenkins'
+                    sh "git remote remove origin"
+                    sh "git remote add origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
                     sh "git remote set-url origin https://yigitcicek:${TOKEN}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
                     sh "git add ."
                     // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
