@@ -81,16 +81,14 @@ pipeline {
         stage("commit version update") {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github-pat-y', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                        // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
-                        sh 'git config --global user.email jenkins@example.com'
-                        sh 'git config --global user.name jenkins'
-                        sh "git remote set-url origin https://${PASSWORD}@github.com/yigitcicek/sample-app-spring-boot-hello.git"
-                        sh "git add ."
-                        // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
-                        sh "git commit -m 'jenkins version bump'"
-                        sh "git push origin HEAD:feature/docker-compose-ci-cd"
-                    }
+                    // def encodedPassword = URLEncoder.encode("$PASSWORD",'UTF-8')
+                    sh 'git config --global user.email jenkins@example.com'
+                    sh 'git config --global user.name jenkins'
+                    sh "git remote set-url origin https://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@github.com/yigitcicek/sample-app-spring-boot-hello.git"
+                    sh "git add ."
+                    // sh "git commit -m 'jenkins version bump for build ${BUILD_NUMBER}'"
+                    sh "git commit -m 'jenkins version bump'"
+                    sh "git push origin HEAD:feature/docker-compose-ci-cd"
                 }
             }
         }
