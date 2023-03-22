@@ -56,22 +56,47 @@ pipeline {
             }
         }
 
-        stage("deploy") {
-            input {
-                // get ec2 instance private IP
-                message "Ec2 instance private"
-                ok "Done"
-                parameters {
-                    string defaultValue: "", description: "target ec2 private IP address", name: "IP", trim: true
-                }
+        stage("provision server") {
+            environment {
+                AWS_ACCESS_KEY_ID = credentials("jenkins_aws_access_key_id")
+                AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
+                TF_VAR_env_prefix = "test"
             }
             steps {
                 script {
+                    dir("terraform") {
+                        sh "terraform init"
+                        sh "terraform apply --auto-approve"
+                        IP = sh(
+                            script: "terraform output ec2_public_ip"
+                            returnStdout: true
+                        ).trim()
+                    }
+                }
+            }
+        }
+
+        stage("deploy") {
+            // input {
+            //     // get ec2 instance private IP
+            //     message "Ec2 instance private"
+            //     ok "Done"
+            //     parameters {
+            //         string defaultValue: "", description: "target ec2 private IP address", name: "IP", trim: true
+            //     }
+            // }
+            steps {
+                script {
                     echo "deploying ..........."
+
+                    sleep(time: 90, unit: "SECONDS")
+
+                    echo "ec2 ip is ${IP}"
+
                     def shellCommand = "bash ./commands.sh ${IMAGE_NAME}"
                     sshagent(['ec2-sample-app-001-key']) {
-                        sh "scp docker-compose.yaml ubuntu@${IP}:/home/ubuntu/"
-                        sh "scp commands.sh ubuntu@${IP}:/home/ubuntu/"
+                        sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ubuntu@${IP}:/home/ubuntu/"
+                        sh "scp -o StrictHostKeyChecking=no commands.sh ubuntu@${IP}:/home/ubuntu/"
                         sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} ${shellCommand}"
                     }
                 }
