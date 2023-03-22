@@ -57,14 +57,24 @@ pipeline {
         }
 
         stage("provision server") {
+            input {
+                // give your IP to allow access to ssh to ec2
+                message "Your IP address"
+                ok "Done"
+                parameters {
+                    string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true
+                }
+            }
             environment {
                 AWS_ACCESS_KEY_ID = credentials("jenkins_aws_access_key_id")
                 AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
                 TF_VAR_env_prefix = "test"
+                TF_VAR_my_ip = OWN_IP
             }
             steps {
                 script {
                     dir("terraform") {
+                        echo "own ip is set to $OWN_IP"
                         sh "terraform init"
                         sh "terraform apply --auto-approve"
                         IP = sh(

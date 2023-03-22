@@ -17,5 +17,5 @@ variable instance_type {
     default = "t4g.small"
 }
 variable key_name {
-    default = "10.0.0.0/16"
+    default = "global-key"
 }
