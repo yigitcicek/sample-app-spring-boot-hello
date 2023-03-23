@@ -29,6 +29,7 @@ pipeline {
             steps{
                 script {
                     echo "getting user input ..........."
+                    sh "printenv"
                     // INPUT_PARAMS = input message: "enter own ip to allow ssh for new ec2", parameters [
                     //     string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
                     // ]

@@ -19,3 +19,7 @@ variable instance_type {
 variable key_name {
     default = "global-key"
 }
+
+variable jenkins_ip {
+    default = "18.184.142.234/32"
+}
