@@ -23,9 +23,10 @@ pipeline {
                 // give your IP to allow access to ssh to ec2
                 message "Your IP address"
                 ok "Done"
-                parameters {
-                    string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true,
-                    string defaultValue: "", description: "jenkins ip address", name: "JENKINS_IP", trim: true,
+                parameters { [
+                    string( defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true),
+                    string (defaultValue: "", description: "jenkins ip address", name: "JENKINS_IP", trim: true)
+                    ]
                 }
             }
             
