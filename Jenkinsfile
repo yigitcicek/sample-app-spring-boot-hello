@@ -84,7 +84,7 @@ pipeline {
                 AWS_ACCESS_KEY_ID = credentials("jenkins_aws_access_key_id")
                 AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
                 TF_VAR_env_prefix = "test"
-                TF_VAR_my_ip = ${INPUT_PARAMS.own_ip}
+                TF_VAR_my_ip = "${INPUT_PARAMS.own_ip}"
             }
             steps {
                 script {
