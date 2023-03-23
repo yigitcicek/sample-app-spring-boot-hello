@@ -7,7 +7,7 @@ library identifier: "sample-jenkins-shared-library@main", retriever: modernSCM(
     ]
 )
 
-def INPUT_PARAMS = null
+def OWN_IP = null
 def EC2_IP_TO_DEPLOY = null
 
 pipeline {
@@ -17,14 +17,22 @@ pipeline {
     }
     stages {
         stage ("user_input"){
+            input {
+                // give your IP to allow access to ssh to ec2
+                message "Your IP address"
+                ok "Done"
+                parameters {
+                    string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true
+                }
+            }
             steps{
                 script {
                     echo "getting user input ..........."
-                    INPUT_PARAMS = input message: "enter own ip to allow ssh for new ec2", parameters [
-                        string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
-                    ]
+                    // INPUT_PARAMS = input message: "enter own ip to allow ssh for new ec2", parameters [
+                    //     string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
+                    // ]
+                     sh "echo User entered IP is ${OWN_IP}"
                 }
-                sh "echo User entered IP is ${INPUT_PARAMS.own_ip}"
             }
         }
 
@@ -84,12 +92,12 @@ pipeline {
                 AWS_ACCESS_KEY_ID = credentials("jenkins_aws_access_key_id")
                 AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
                 TF_VAR_env_prefix = "test"
-                TF_VAR_my_ip = "${INPUT_PARAMS.own_ip}"
+                TF_VAR_my_ip = "${OWN_IP}"
             }
             steps {
                 script {
                     dir("terraform") {
-                        echo "own ip is set to ${INPUT_PARAMS.own_ip}"
+                        echo "own ip is set to ${OWN_IP}"
                         sh "terraform init"
                         sh "terraform apply --auto-approve"
                         EC2_IP_TO_DEPLOY = sh(
