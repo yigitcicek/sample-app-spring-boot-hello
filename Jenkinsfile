@@ -7,7 +7,7 @@ library identifier: "sample-jenkins-shared-library@main", retriever: modernSCM(
     ]
 )
 
-def OWN_IP = null
+def IP_TO_ALLOW_SSH = null
 def EC2_IP_TO_DEPLOY = null
 
 pipeline {
@@ -32,6 +32,7 @@ pipeline {
                     //     string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
                     // ]
                      sh "echo User entered IP is ${OWN_IP}"
+                     sh "${IP_TO_ALLOW_SSH} = ${OWN_IP}"
                 }
             }
         }
@@ -92,7 +93,7 @@ pipeline {
                 AWS_ACCESS_KEY_ID = credentials("jenkins_aws_access_key_id")
                 AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
                 TF_VAR_env_prefix = "test"
-                TF_VAR_my_ip = "${OWN_IP}"
+                TF_VAR_my_ip = "${IP_TO_ALLOW_SSH}"
             }
             steps {
                 script {
