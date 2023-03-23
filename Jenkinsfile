@@ -9,6 +9,7 @@ library identifier: "sample-jenkins-shared-library@main", retriever: modernSCM(
 
 environment {
     IP_TO_ALLOW_SSH = ""
+    JENKINS_IP_TO_ALLOW_SSH = ""
 }
 
 pipeline {
@@ -23,9 +24,11 @@ pipeline {
                 message "Your IP address"
                 ok "Done"
                 parameters {
-                    string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true
+                    string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true,
+                    string defaultValue: "", description: "jenkins ip address", name: "JENKINS_IP", trim: true,
                 }
             }
+            
             steps{
                 script {
                     echo "getting user input ..........."
@@ -34,8 +37,7 @@ pipeline {
                     //     string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
                     // ]
                     IP_TO_ALLOW_SSH = "${OWN_IP}"
-                    echo "User entered IP is ${OWN_IP}"
-                    echo "Env IP set to ${IP_TO_ALLOW_SSH}"
+                    JENKINS_IP_TO_ALLOW_SSH = "${JENKINS_IP}"
                 }
             }
         }
