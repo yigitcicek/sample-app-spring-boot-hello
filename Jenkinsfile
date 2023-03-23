@@ -100,7 +100,7 @@ pipeline {
             steps {
                 script {
                     dir("terraform") {
-                        echo "own ip is set to ${OWN_IP}"
+                        echo "own ip is set to ${IP_TO_ALLOW_SSH}"
                         sh "terraform init"
                         sh "terraform apply --auto-approve"
                         EC2_IP_TO_DEPLOY = sh(
