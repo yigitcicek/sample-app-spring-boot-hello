@@ -22,7 +22,6 @@ pipeline {
             input {
                 // give your IP to allow access to ssh to ec2
                 message "Your IP address"
-                ok "Done"
                 parameters { [
                     string( defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true),
                     string (defaultValue: "", description: "jenkins ip address", name: "JENKINS_IP", trim: true)
@@ -32,13 +31,21 @@ pipeline {
             
             steps{
                 script {
+                    env.IP_TO_ALLOW_SSH = input message: 'Please enter your IP',
+                        parameters: [string(defaultValue: '',
+                                    description: '',
+                                    name: 'OWN_IP')]
+                    env.JENKINS_IP_TO_ALLOW_SSH = input message: 'Please enter jenkins IP',
+                        parameters: [password(defaultValue: '',
+                                    description: '',
+                                    name: 'JENKINS_IP')]
                     echo "getting user input ..........."
                     sh "printenv"
                     // INPUT_PARAMS = input message: "enter own ip to allow ssh for new ec2", parameters [
                     //     string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
                     // ]
-                    IP_TO_ALLOW_SSH = "${OWN_IP}"
-                    JENKINS_IP_TO_ALLOW_SSH = "${JENKINS_IP}"
+                    // IP_TO_ALLOW_SSH = "${OWN_IP}"
+                    // JENKINS_IP_TO_ALLOW_SSH = "${JENKINS_IP}"
                 }
             }
         }
@@ -100,11 +107,13 @@ pipeline {
                 AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
                 TF_VAR_env_prefix = "test"
                 TF_VAR_my_ip = "${IP_TO_ALLOW_SSH}"
+                TF_VAR_jenkins_ip = "${JENKINS_IP_TO_ALLOW_SSH}"
             }
             steps {
                 script {
                     dir("terraform") {
                         echo "own ip is set to ${IP_TO_ALLOW_SSH}"
+                        echo "jenkins ip is set to ${JENKINS_IP_TO_ALLOW_SSH}"
                         sh "terraform init"
                         sh "terraform apply --auto-approve"
                         EC2_IP_TO_DEPLOY = sh(
