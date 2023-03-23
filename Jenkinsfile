@@ -7,8 +7,9 @@ library identifier: "sample-jenkins-shared-library@main", retriever: modernSCM(
     ]
 )
 
-def IP_TO_ALLOW_SSH = null
-def EC2_IP_TO_DEPLOY = null
+environment {
+    IP_TO_ALLOW_SSH = ""
+}
 
 pipeline {
     agent any
@@ -31,8 +32,9 @@ pipeline {
                     // INPUT_PARAMS = input message: "enter own ip to allow ssh for new ec2", parameters [
                     //     string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
                     // ]
-                     sh "echo User entered IP is ${OWN_IP}"
-                     sh "${IP_TO_ALLOW_SSH} = ${OWN_IP}"
+                    IP_TO_ALLOW_SSH = "${OWN_IP}"
+                    echo "User entered IP is ${OWN_IP}"
+                    echo "Env IP set to ${IP_TO_ALLOW_SSH}"
                 }
             }
         }
