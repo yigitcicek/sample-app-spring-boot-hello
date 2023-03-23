@@ -19,15 +19,15 @@ pipeline {
     }
     stages {
         stage ("user_input"){
-            input {
-                // give your IP to allow access to ssh to ec2
-                message "Your IP address"
-                parameters { [
-                    string( defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true),
-                    string (defaultValue: "", description: "jenkins ip address", name: "JENKINS_IP", trim: true)
-                    ]
-                }
-            }
+            // input {
+            //     // give your IP to allow access to ssh to ec2
+            //     message "Your IP address"
+            //     parameters { [
+            //         string( defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true),
+            //         string (defaultValue: "", description: "jenkins ip address", name: "JENKINS_IP", trim: true)
+            //         ]
+            //     }
+            // }
             
             steps{
                 script {
