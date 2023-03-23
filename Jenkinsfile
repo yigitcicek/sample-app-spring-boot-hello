@@ -36,7 +36,7 @@ pipeline {
                                     description: '',
                                     name: 'OWN_IP')]
                     env.JENKINS_IP_TO_ALLOW_SSH = input message: 'Please enter jenkins IP',
-                        parameters: [password(defaultValue: '',
+                        parameters: [string(defaultValue: '',
                                     description: '',
                                     name: 'JENKINS_IP')]
                     echo "getting user input ..........."
