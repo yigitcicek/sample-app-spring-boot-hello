@@ -7,16 +7,31 @@ library identifier: "sample-jenkins-shared-library@main", retriever: modernSCM(
     ]
 )
 
+def INPUT_PARAMS = null
+def EC2_IP_TO_DEPLOY = null
+
 pipeline {
     agent any
     tools {
         maven "maven-3.9"
     }
     stages {
+        stage ("user_input"){
+            steps{
+                script {
+                    echo "getting user input ..........."
+                    INPUT_PARAMS = input message: "enter own ip to allow ssh for new ec2", parameters [
+                        string(description: 'Own IP', defaultValue: '', name: 'own_ip'),
+                    ]
+                }
+                sh "echo User entered IP is ${INPUT_PARAMS.own_ip}"
+            }
+        }
+
         stage("increment version") {
             steps {
                 script {
-                    echo "incrementing app version..."
+                    echo "incrementing app version ..........."
                     sh "mvn build-helper:parse-version versions:set \
                         -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
                         versions:commit"
@@ -57,27 +72,27 @@ pipeline {
         }
 
         stage("provision server") {
-            input {
-                // give your IP to allow access to ssh to ec2
-                message "Your IP address"
-                ok "Done"
-                parameters {
-                    string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true
-                }
-            }
+            // input {
+            //     // give your IP to allow access to ssh to ec2
+            //     message "Your IP address"
+            //     ok "Done"
+            //     parameters {
+            //         string defaultValue: "", description: "your ip address", name: "OWN_IP", trim: true
+            //     }
+            // }
             environment {
                 AWS_ACCESS_KEY_ID = credentials("jenkins_aws_access_key_id")
                 AWS_SECRET_ACCESS_KEY = credentials("jenkins_aws_secret_access_key")
                 TF_VAR_env_prefix = "test"
-                TF_VAR_my_ip = $OWN_IP
+                TF_VAR_my_ip = ${INPUT_PARAMS.own_ip}
             }
             steps {
                 script {
                     dir("terraform") {
-                        echo "own ip is set to $OWN_IP"
+                        echo "own ip is set to ${INPUT_PARAMS.own_ip}"
                         sh "terraform init"
                         sh "terraform apply --auto-approve"
-                        IP = sh(
+                        EC2_IP_TO_DEPLOY = sh(
                             script: "terraform output ec2_public_ip",
                             returnStdout: true
                         ).trim()
@@ -101,13 +116,13 @@ pipeline {
 
                     sleep(time: 90, unit: "SECONDS")
 
-                    echo "ec2 ip is ${IP}"
+                    echo "ec2 ip is ${EC2_IP_TO_DEPLOY}"
 
                     def shellCommand = "bash ./commands.sh ${IMAGE_NAME}"
                     sshagent(['ec2-sample-app-001-key']) {
-                        sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ubuntu@${IP}:/home/ubuntu/"
-                        sh "scp -o StrictHostKeyChecking=no commands.sh ubuntu@${IP}:/home/ubuntu/"
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${IP} ${shellCommand}"
+                        sh "scp -o StrictHostKeyChecking=no docker-compose.yaml ubuntu@${EC2_IP_TO_DEPLOY}:/home/ubuntu/"
+                        sh "scp -o StrictHostKeyChecking=no commands.sh ubuntu@${EC2_IP_TO_DEPLOY}:/home/ubuntu/"
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@${EC2_IP_TO_DEPLOY} ${shellCommand}"
                     }
                 }
             }
